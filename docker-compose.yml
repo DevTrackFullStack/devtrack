@@ -1,0 +1,27 @@
+services:
+  # mysql:
+  # api:
+  spa:
+    container_name: spa-devtrack
+    build: ./spa
+    # depends_on:
+    #   - api
+    env_file:
+      - ./spa/.env
+    volumes:
+      - spa-vol:/var/www/html
+
+  ngninx:
+    container_name: nginx-wallet
+    build: ./nginx
+    ports:
+      - 80:80
+    volumes:
+      - spa-vol:/var/www/html
+    # depends_on:
+    #   - mysql
+    #   - api
+    #   - spa
+
+volumes:
+  spa-vol:
