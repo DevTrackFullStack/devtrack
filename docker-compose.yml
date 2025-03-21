@@ -12,7 +12,7 @@ services:
       - spa-vol:/var/www/html
 
   ngninx:
-    container_name: nginx-wallet
+    container_name: nginx-devtrack
     build: ./nginx
     ports:
       - 80:80
