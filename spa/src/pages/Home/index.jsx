@@ -1,6 +1,7 @@
 import Card from "react-bootstrap/Card";
 import "./Home.css";
 import Button from "react-bootstrap/Button";
+import { API_URL } from "../../config";
 export function Home() {
   return (
     <div className="main ">
