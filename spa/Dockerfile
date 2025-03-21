@@ -1,19 +1,32 @@
-FROM node:latest
+FROM node:22.14.0-alpine AS builder
 
-WORKDIR /tmp/react
+WORKDIR /app
 
+# Copie apenas os arquivos de dependências primeiro para aproveitar o cache
+COPY package.json pnpm-lock.yaml ./
+
+# Instale o pnpm e as dependências
+RUN npm install -g pnpm && \
+    pnpm install --frozen-lockfile
+
+# Agora copie o restante dos arquivos
 COPY . .
 
-RUN rm -rf node_modules
+# Compile a aplicação
+RUN pnpm run build
 
-RUN npm install
+# Resultado final - apenas os arquivos estáticos
+FROM alpine:latest
 
-RUN npm run build
+# Instale apenas o necessário para servir arquivos estáticos
+RUN apk add --no-cache curl
 
-RUN mkdir -p /var/www/html
+WORKDIR /var/www/html
 
-RUN mv dist/* /var/www/html
+# Copie apenas os arquivos de build do estágio anterior
+COPY --from=builder /app/dist/ .
+
 VOLUME /var/www/html
 
-WORKDIR /
-RUN rm -rf /tmp/react
+# Este container apenas prepara os arquivos,
+# você pode montá-los no seu container nginx existente
